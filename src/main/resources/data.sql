@@ -1,0 +1,1 @@
+insert into tenant (id, description, owner, license) values (1,'teste', 'teste', 'teste');
