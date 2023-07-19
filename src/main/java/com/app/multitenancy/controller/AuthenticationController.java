@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.app.multitenancy.config.security.TokenService;
 import com.app.multitenancy.domain.User;
 import com.app.multitenancy.domain.request.AuthenticationRequest;
 import com.app.multitenancy.domain.request.RegisterRequest;
@@ -27,6 +28,9 @@ public class AuthenticationController {
 	
 	@Autowired
 	private UserRepository repository;
+	
+	@Autowired
+	private TokenService tokenService;
 
 	@PostMapping("/login")
 	public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest authRequest) {
@@ -34,7 +38,9 @@ public class AuthenticationController {
 				authRequest.username(), authRequest.password());
 		
 		var auth = this.authenticationManager.authenticate(usernamePassword);
-		return ResponseEntity.ok().build();
+		
+		var token = tokenService.generateToken((User) auth.getPrincipal());
+		return ResponseEntity.ok(new AuthenticationResponse(token));
 	}
 	
 	@PostMapping("/register")
