@@ -1,13 +1,13 @@
 package com.app.multitenancy.domain;
 
 import java.util.Collection;
-import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -19,6 +19,8 @@ import jakarta.persistence.Table;
 @Table(name = "users")
 public class User implements UserDetails {
 
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -27,6 +29,8 @@ public class User implements UserDetails {
 	private String password;
 	private String name;
 	private String email;
+	
+	@Enumerated(EnumType.STRING)
 	private UserRole role;
 
 	@ManyToOne

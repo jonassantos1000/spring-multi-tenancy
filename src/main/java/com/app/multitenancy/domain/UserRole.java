@@ -2,6 +2,7 @@ package com.app.multitenancy.domain;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -44,8 +45,10 @@ public enum UserRole {
 	}
 	
 	public List<SimpleGrantedAuthority> getAuthorities(){
-		var authorities = getPermissions().stream()
-		.map(permission -> new SimpleGrantedAuthority(this.name().concat("_").concat(permission.name()))).toList();
+		List<SimpleGrantedAuthority> authorities = getPermissions()
+				.stream()
+				.map(permission -> new SimpleGrantedAuthority(permission.name()))
+				.collect(Collectors.toList());
 		
 		authorities.add(new SimpleGrantedAuthority("ROLE_".concat(this.name())));
 		
