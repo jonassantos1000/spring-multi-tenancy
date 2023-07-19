@@ -1,17 +1,55 @@
 package com.app.multitenancy.domain;
 
-public enum UserRole {
+import java.util.List;
+import java.util.Set;
 
-	ADMIN("admin"),
-	USER("user");
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+public enum UserRole {
+	USER(
+		 Set.of(
+				Permission.CREATE,
+				Permission.READ,
+				Permission.UPDATE
+				)
+		),
 	
-	private String role;
+	MANAGER(
+			Set.of(
+				Permission.CREATE,
+				Permission.READ,
+				Permission.UPDATE,
+				Permission.DELETE
+				)
+			),
 	
-	UserRole(String role){
-		this.role=role;
+	MASTER(
+			Set.of(
+					Permission.CREATE,
+					Permission.READ,
+					Permission.UPDATE,
+					Permission.DELETE,
+					Permission.ADMIN
+					)
+			);
+
+	private final Set<Permission> permissions;
+
+	UserRole(Set<Permission> permissions) {
+		this.permissions = permissions;
 	}
 	
-	public String getRole() {
-		return this.role;
+	public Set<Permission> getPermissions() {
+		return this.permissions;
 	}
+	
+	public List<SimpleGrantedAuthority> getAuthorities(){
+		var authorities = getPermissions().stream()
+		.map(permission -> new SimpleGrantedAuthority(this.name().concat("_").concat(permission.name()))).toList();
+		
+		authorities.add(new SimpleGrantedAuthority("ROLE_".concat(this.name())));
+		
+		return authorities;
+	}
+
 }
